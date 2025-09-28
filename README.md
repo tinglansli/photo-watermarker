@@ -96,6 +96,19 @@ python src\photo_watermark\watermark.py "E:\Study\研一上\photo-watermark-cli\
 | `--stroke-color` | 描边颜色 | `#000000` |
 | `--fallback-mtime` | 无 EXIF 时用文件修改时间 | 关闭 |
 
+### 常用参数
+- --position：rb/rt/lb/lt/c 等；默认 rb（右下）
+- --font-size：固定字号；--auto-size：短边比例（两者二选一，后者覆盖前者）
+- --color / --stroke-color：支持 #RRGGBB 或颜色名
+- --opacity：0-255；--stroke-width：描边像素
+- --fallback-mtime：当无 EXIF 日期时使用文件修改时间
+
+### 示例
+```bash
+python src/photo_watermark/watermark.py "tests/demo" \
+  --position rb --auto-size 0.12 --color "#FFFFFF" \
+  --stroke-width 2 --stroke-color "#000000" --opacity 220 --fallback-mtime
+
 ---
 
 ## 📂 输出说明
