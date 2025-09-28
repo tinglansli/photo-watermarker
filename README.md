@@ -1,122 +1,103 @@
-# photo-watermark-cli
+# Photo Watermark 2
 
-**photo-watermark-cli** 是一个命令行工具：批量读取图片的 **EXIF 拍摄日期（仅年月日）**，将其作为**文字水印**叠加到图片上。  
-用户可设置**字体大小**、**颜色**、**位置（左上/居中/右下等）** 等参数。  
-处理后的图片**统一保存到项目根目录的 `output/` 文件夹**，不会覆盖原图（文件名追加 `_wm`）。
+**Photo Watermark 2** 是一个本地运行的图片批量加水印工具。
+提供**拖拽导入**、**实时预览**、**九宫格定位 + 预览区拖拽**、**文本/图片水印**、**旋转**、**模板管理**与**批量导出**等能力。  
 
----
+<img width="3840" height="2090" alt="image" src="https://github.com/user-attachments/assets/9d243fef-19b0-4871-b52b-7c7b53b27dc9" />
 
-## ✨ 功能特性
-
-- 自动从 EXIF 读取拍摄日期：优先 `DateTimeOriginal` → `DateTimeDigitized` → `DateTime`；输出格式 `YYYY-MM-DD`  
-- 支持**单张图片**或**目录（递归子目录）**批量处理  
-- 可配置：
-  - 位置：`lt`（左上）、`rt`（右上）、`lb`（左下）、`rb`（右下，默认）、`c`/`center`（居中）
-  - 字体大小（`--font-size`）或**按图片短边比例自动字号**（`--auto-size`，推荐）
-  - 颜色（`--color`），透明度（`--opacity`），边距（`--margin`），描边（`--stroke-width` / `--stroke-color`）
-  - 字体文件（`--font`，建议中文环境指定中文字体）
-- 无 EXIF 可用**文件修改时间**兜底（`--fallback-mtime`）
-- **输出目录**始终为**项目根目录**下的 `output/` 文件夹（避免递归二次处理）
 
 ---
 
-## ⚙️ 环境配置
 
-> 仅依赖 [Pillow](https://python-pillow.org/)。建议优先使用 **Anaconda/Miniconda**；也可使用 Python 自带 **venv**。
+## 📥 获取方式
 
-### 方式一：Anaconda / Miniconda（推荐）
-```bat
-conda create -n photo-wm python=3.11 -y
-conda activate photo-wm
-conda install -c conda-forge pillow -y
-```
-
-> 若遇到缓存损坏或版本问题：
-> ```bat
-> conda clean -a -y
-> conda update -n base -c defaults conda -y
-> ```
-
-### 方式二：Python venv（可选）
-```bat
-python -m venv .venv
-.venv\Scripts\activate           # Windows
-# source .venv/bin/activate      # macOS/Linux
-pip install Pillow
-```
+1. 前往 GitHub 本仓库的 **Releases** 页面，下载`PhotoWatermark2.zip`。  
+2. 解压后，双击运行`PhotoWatermark2.exe`。  
+3. `test_imgs`中提供了用于测试的图片
 
 ---
 
-## 🚀 使用方式（示例）
+## ✨ 功能概览
 
-> 请先切到项目根目录，例如：`E:\Study\研一上\photo-watermark-cli`
+- **导入与预览**
+  - 直接**拖拽图片或文件夹**到左侧列表，或通过菜单“文件 → 导入图片/文件夹”添加。
+  - 支持 **JPEG / PNG / BMP / TIFF**。
+  - 左侧列表展示缩略图，单击可切换预览目标。
 
-### A. 批量处理整个目录（推荐）
-```bat
-python src\photo_watermark\watermark.py "E:\Study\研一上\photo-watermark-cli\tests" ^
-  --auto-size 0.05 ^
-  --position rb ^
-  --color white ^
-  --opacity 220 ^
-  --stroke-width 2 --stroke-color black ^
-  --font "C:\Windows\Fonts\msyh.ttc" ^
-  --fallback-mtime
-```
-说明：
-- `--auto-size 0.05` 表示字体≈“图片短边的 5%”（比固定字号更自适应，也更容易统一视觉效果）
-- `--position rb` 水印在右下角；可改 `lt/rt/lb/c` 等
-- `--font` 指定中文字体，避免出现方块字
+- **水印类型**
+  - **文本水印**：自定义文本、字体、字号、粗体/斜体、颜色、透明度、描边（宽度/颜色）、阴影（偏移与颜色）。
+  - **图片水印**：从本地选择图片，按比例缩放，整体透明度可调。
 
-### B. 处理单张图片
-```bat
-python src\photo_watermark\watermark.py "E:\Study\研一上\photo-watermark-cli\tests\test_img_01.jpg" ^
-  --auto-size 0.05 ^
-  --position center ^
-  --color "#FFD700" ^
-  --opacity 200 ^
-  --stroke-width 2 --stroke-color "#000000" ^
-  --font "C:\Windows\Fonts\msyh.ttc"
-```
+- **布局与交互**
+  - **实时预览**：所有调整即时反映在中间预览区。
+  - **九宫格一键定位**：四角 / 边中心 / 正中心。
+  - **自由拖拽**：在预览区用鼠标直接拖动水印到任意位置。
+  - **旋转**：-180° ~ 180° 连续可调。
+
+- **导出与命名**
+  - 导出 **PNG** 或 **JPEG**；JPEG 支持**质量（压缩率）**滑块。
+  - **尺寸调整**：不缩放 / 按宽度 / 按高度 / 按百分比。
+  - **命名规则**：保留原名 / 加前缀 / 加后缀（默认 `_watermarked`）。
+
+- **模板**
+  - 将当前所有参数（内容、字体、颜色、位置、大小、透明度、旋转、导出设置等）**保存为模板**。
+  - 支持**加载/设为默认/删除/打开模板文件夹**。
+  - 程序启动时自动加载**上次退出时的设置**。
 
 ---
 
-## 📖 参数说明
+## 🚀 使用流程
 
-| 参数 | 说明 | 默认值 / 取值 |
-|---|---|---|
-| `path` | 输入路径（文件或目录） | 必填 |
-| `--position` | 水印位置：`lt` / `rt` / `lb` / `rb` / `c`（别名：`left-top`/`top-left`/`right-bottom`/`center` 等） | `rb` |
-| `--font-size` | 固定字号（像素）。当 `--auto-size` > 0 时被覆盖 | `96` |
-| `--auto-size` | 自动字号（图片短边 × 比例，例：`0.05` = 5%） | `0.0`（关闭） |
-| `--color` | 文字颜色，支持 `#RRGGBB` / `#RGB` / 颜色名（white/black 等） | `#FFFFFF` |
-| `--opacity` | 不透明度 0–255（越小越透明） | `220` |
-| `--margin` | 距边距（像素） | `20` |
-| `--font` | 字体文件路径（TTF/OTF/TTC）。中文建议指定 | 自动探测，失败用默认字体 |
-| `--stroke-width` | 描边宽度（像素） | `2` |
-| `--stroke-color` | 描边颜色 | `#000000` |
-| `--fallback-mtime` | 无 EXIF 时用文件修改时间 | 关闭 |
+### 1) 导入图片
+- 方式 A：把**图片文件或整个文件夹**拖拽到左侧列表；
+- 方式 B：菜单 **文件 → 导入图片… / 导入文件夹…**；
+- 左侧显示缩略图与文件名；点击切换预览对象。
+> 程序会忽略不支持的格式，并避免重复导入同一文件。
 
-### 常用参数
-- --position：rb/rt/lb/lt/c 等；默认 rb（右下）
-- --font-size：固定字号；--auto-size：短边比例（两者二选一，后者覆盖前者）
-- --color / --stroke-color：支持 #RRGGBB 或颜色名
-- --opacity：0-255；--stroke-width：描边像素
-- --fallback-mtime：当无 EXIF 日期时使用文件修改时间
+### 2) 选择水印类型与样式
+- **文本水印**：
+  - 文本内容、系统字体、字号、粗体/斜体
+  - 字体颜色与**透明度（0~100%）**
+  - **描边**（开关、宽度、颜色）
+  - **阴影**（开关、X/Y 偏移、颜色）
+- **图片水印**：
+  - 选择本地图片（建议 PNG 透明）
+  - **缩放百分比**、**整体透明度**
 
-### 示例
-```bash
-python src/photo_watermark/watermark.py "tests/demo" \
-  --position rb --auto-size 0.12 --color "#FFFFFF" \
-  --stroke-width 2 --stroke-color "#000000" --opacity 220 --fallback-mtime
+### 3) 布局与旋转
+- 点击九宫格按钮将水印贴到固定位置（含四角、边中心、正中心）。
+- 在**预览区直接拖拽**水印，进行任意精细定位。
+- 通过“旋转”滑块设置角度（-180°~180°）。
+
+### 4) 导出
+- 选择**输出文件夹**（默认不允许与源文件夹相同，可取消限制）。
+- 选择**输出格式**：PNG / JPEG（JPEG 可调整质量）。
+- 选择**尺寸调整**策略（不缩放 / 宽 / 高 / 百分比）。
+- 设置**命名规则**：
+  - **保留原文件名**：`name.jpg → name.jpg`
+  - **前缀**：`name.jpg → wm_name.jpg`
+  - **后缀**（默认 `_watermarked`）：`name.jpg → name_watermarked.jpg`
+- 点击“**导出当前**”或“**批量导出全部**”。
+
+### 5) 模板管理
+- **保存为新模板**：将当前所有设置保存为 `{模板名}.json`。
+- **加载所选模板**：一键恢复所有参数。
+- **设为默认模板**：下次启动自动载入。
+- **删除所选模板 / 打开模板文件夹**：便于手动管理与备份。
 
 ---
 
-## 📂 输出说明
+## 🗂️ 命名与输出示例
 
-- 输入是目录：结果写入**项目根目录**下的 `output/` 文件夹
-- 输入是单文件：也写入**项目根目录**下的 `output/` 文件夹
-- 输出文件名在原名后追加 `_wm`，例如：
-  - `test_img_01.jpg` → `output/test_img_01_wm.jpg`
-  - `holiday.png` → `output/holiday_wm.png`
-- 原图不会被覆盖
+- 原图：`holiday.png`  
+  - **后缀**（默认 `_watermarked`）：`holiday_watermarked.png`  
+  - **前缀**（示例 `wm_`）：`wm_holiday.png`  
+  - **保留原名**：`holiday.png`（注意避免与原图同目录）
 
+- 原图：`IMG_0001.jpg` → **输出 JPEG（质量 85）** → `IMG_0001_watermarked.jpg`
+
+---
+
+## 📄 许可证
+
+本项目遵循本仓库中声明的 License（如无特别说明，默认以仓库 License 为准）。
